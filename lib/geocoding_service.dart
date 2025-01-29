@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GeocodingService {
-  final String apiKey = 'TU_API_KEY_AQUI'; // Reemplaza con tu clave de API
+  final String apiKey =
+      'AIzaSyAK8SwgDEk6vd5K764aiLAtOSQDlU5WZKU'; // Reemplaza con tu clave de API
 
   Future<LatLng?> getCoordinates(String address) async {
     final url = Uri.parse(

@@ -1,53 +1,138 @@
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
+
+// Imports locales
+import 'package:playground/utils/constants.dart';
+import 'package:playground/utils/utils.dart';
 
 class MapScreenPos extends StatefulWidget {
+  const MapScreenPos({super.key});
+
   @override
-  _MapScreenState createState() => _MapScreenState();
+  State<MapScreenPos> createState() => _MapScreenPosState();
 }
 
-class _MapScreenState extends State<MapScreenPos> {
-  late GoogleMapController _controller;
+class _MapScreenPosState extends State<MapScreenPos> {
+  Completer<GoogleMapController> googleMapController = Completer();
+  List<LatLng> posiciones = [];
+  Set<Polyline> polylines = {};
+  Set<Marker> markers = {};
+  CameraPosition initialCameraPosition = const CameraPosition(
+    zoom: 16,
+    target: LatLng(-12.1973, -76.9702),
+  );
+  late BitmapDescriptor icon;
 
-  final LatLng _initialPosition = LatLng(19.6900, -103.3350); // San Francisco
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
 
-  final List<LatLng> _coordinates = [
-    LatLng(19.6900, -103.3350), // Ejemplo: El Grullo, Jalisco
-    LatLng(19.6905, -103.3355),
-    LatLng(19.6910, -103.3360),
-    LatLng(19.6915, -103.3365),
-    LatLng(19.6920, -103.3370),
-  ];
+  Future<void> initData() async {
+    posiciones.addAll(
+      [
+        const LatLng(-12.1973, -76.9702),
+        const LatLng(-12.1977, -76.9678),
+        const LatLng(-12.1980, -76.9658),
+        const LatLng(-12.1994, -76.9659),
+      ],
+    );
+    await setIcon();
+    setMarkers();
+    setPolylines();
+  }
 
-  Set<Marker> _createMarkers() {
-    return _coordinates
-        .asMap()
-        .entries
-        .map(
-          (entry) => Marker(
-            markerId: MarkerId('marker_${entry.key}'),
-            position: entry.value,
-            infoWindow: InfoWindow(title: 'Marker ${entry.key + 1}'),
+  Future<void> setIcon() async {
+    Uint8List iconBytes = await Utils.getBytesFromAsset(kMarker, 120);
+    icon = BitmapDescriptor.bytes(iconBytes);
+  }
+
+  void setMarkers() {
+    for (var posicion in posiciones) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(posicion.toString()),
+          position: posicion,
+          icon: icon,
+          infoWindow: InfoWindow(
+            title: DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
           ),
-        )
-        .toSet();
+        ),
+      );
+    }
+    setState(() {});
+  }
+
+  void setPolylines() {
+    polylines.add(
+      Polyline(
+        polylineId: const PolylineId('id'),
+        points: posiciones,
+        width: 4,
+        color: Colors.purple,
+      ),
+    );
+    moverCamara(posiciones.last);
+    setState(() {});
+  }
+
+  void addMarker(LatLng nuevaPosicion) {
+    LatLng ultimaPosicion = markers.last.position;
+    markers.add(
+      Marker(
+        markerId: MarkerId(nuevaPosicion.toString()),
+        position: nuevaPosicion,
+        icon: icon,
+        infoWindow: InfoWindow(
+          title: DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
+        ),
+      ),
+    );
+    polylines.add(
+      Polyline(
+        polylineId: PolylineId(nuevaPosicion.toString()),
+        points: [ultimaPosicion, nuevaPosicion],
+        width: 4,
+        color: Colors.green,
+        patterns: [
+          PatternItem.dot,
+          PatternItem.gap(10),
+        ],
+      ),
+    );
+    moverCamara(nuevaPosicion);
+    setState(() {});
+  }
+
+  Future<void> moverCamara(LatLng posicion) async {
+    final controller = await googleMapController.future;
+    controller.animateCamera(CameraUpdate.newLatLng(posicion));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Maps'),
+        centerTitle: true,
+        title: const Text('Google Maps'),
       ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: _initialPosition,
-          zoom: 17,
+      body: SafeArea(
+        child: GoogleMap(
+          markers: markers,
+          polylines: polylines,
+          mapType: MapType.normal,
+          initialCameraPosition: initialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            googleMapController.complete(controller);
+          },
+          onTap: (LatLng posicion) {
+            addMarker(posicion);
+          },
         ),
-        markers: _createMarkers(),
-        onMapCreated: (controller) {
-          _controller = controller;
-        },
       ),
     );
   }

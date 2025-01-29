@@ -1,14 +1,17 @@
+import "dart:async";
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'geocoding_service.dart';
 
 class MapScreenAddress extends StatefulWidget {
+  const MapScreenAddress({super.key});
+
   @override
-  _MapScreenState createState() => _MapScreenState();
+  State<MapScreenAddress> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreenAddress> {
-  late GoogleMapController _controller;
+  final Completer<GoogleMapController> googleMapController = Completer();
   final GeocodingService _geocodingService = GeocodingService();
 
   final List<String> _addresses = [
@@ -19,7 +22,7 @@ class _MapScreenState extends State<MapScreenAddress> {
     'Manuel Doblado B 21 El Grullo, Jalisco',
   ];
 
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
 
   @override
   void initState() {
@@ -57,8 +60,8 @@ class _MapScreenState extends State<MapScreenAddress> {
           zoom: 18,
         ),
         markers: _markers,
-        onMapCreated: (controller) {
-          _controller = controller;
+        onMapCreated: (GoogleMapController controller) {
+          googleMapController.complete(controller);
         },
       ),
     );
