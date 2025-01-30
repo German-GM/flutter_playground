@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'map_screen_address.dart';
 import 'map_screen_pos.dart';
+import 'map_screen_route.dart';
 
 void main() async {
   runApp(MyApp());
@@ -54,6 +55,18 @@ class HomeScreen extends StatelessWidget {
                 );
               },
               child: Text('Show Coordinates (Addresses)'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapScreenRoute(),
+                  ),
+                );
+              },
+              child: Text('Map route'),
             ),
           ],
         ),
