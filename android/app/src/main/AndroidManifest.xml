@@ -6,7 +6,10 @@
     <application
         android:label="playground"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/local_network_security_config">
+
+        <!-- networkSecurityConfig previene el error net::ERR_CLEARTEXT_NOT_PERMITTED en webview (test seaweedfs) -->
         <!-- API Gmaps -->
         <meta-data 
           android:name="com.google.android.geo.API_KEY"
