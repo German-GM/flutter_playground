@@ -78,10 +78,17 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) return const Center(child: CircularProgressIndicator());
-    if (errorMessage != null) return Center(child: Text(errorMessage!));
-    if (localFile == null)
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMessage != null) {
+      return Center(child: Text(errorMessage!));
+    }
+
+    if (localFile == null) {
       return const Center(child: Text("Archivo no disponible."));
+    }
 
     if (contentType == 'application/pdf') {
       return SfPdfViewer.file(localFile!);
@@ -102,8 +109,8 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ),
         ),
       );
-    } else {
-      return const Center(child: Text("Tipo de archivo no soportado."));
     }
+
+    return const Center(child: Text("Tipo de archivo no soportado."));
   }
 }

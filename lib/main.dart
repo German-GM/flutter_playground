@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Maps Example'),
+        title: Text('Test Features'),
       ),
       body: Center(
         child: Column(
