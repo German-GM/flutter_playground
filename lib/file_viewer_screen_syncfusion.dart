@@ -4,6 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+// OJO: syncfusion requiere licencia para uso comercial, existe una version gratuita y de paga
+// pero se tiene que crear una cuenta primero para generarla
+// Usar solo como último recurso
 class FileViewerScreen extends StatefulWidget {
   final String apiUrl;
   final String bearerToken;
