@@ -24,8 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? error;
 
   Future<void> _login(apiURL) async {
-    final url = Uri.parse(
-        'http://192.168.1.242:4000/api/create_token'); // Ajusta tu ruta de login
+    final url = Uri.parse('http://192.168.1.242:4000/api/create_token');
 
     final response = await http.post(
       url,

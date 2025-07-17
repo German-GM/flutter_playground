@@ -50,7 +50,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
 
       final contentType = response.headers['content-type'] ?? "";
 
-      // Detectar si es PDF
+      // PDFs
       if (contentType.contains('pdf')) {
         final tempDir = await getTemporaryDirectory();
         final filePath = '${tempDir.path}/temp.pdf';
@@ -64,7 +64,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         return;
       }
 
-      // Detectar si es imagen
+      // Imágenes
       if (contentType.contains('image')) {
         setState(() {
           imageBytes = response.bodyBytes;
@@ -73,7 +73,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         return;
       }
 
-      // Otro tipo no soportado
+      // Otros
       setState(() {
         error = "Tipo de archivo no soportado: $contentType";
         isLoading = false;
